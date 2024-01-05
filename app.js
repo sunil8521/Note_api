@@ -29,7 +29,7 @@ async function startserver() {
   try {
     await con("note");
     Item = mongoose.model("task", blue_print);
-    app.listen(port,"192.168.1.4", () => {
+    app.listen(port, () => {
       console.log("application started");
     });
   } catch (er) {
@@ -45,6 +45,19 @@ app.get("/", async (req, res) => {
 app.get("/get", async (req, res) => {
   let val = await fetch();
   res.json(val);
+});
+app.get("/get/:id", async (req, res) => {
+try{
+  const { id } = req.params;
+  const singlePost = await Item.findById(id);
+  if (!singlePost) {
+    return res.status(404).json({ message: "Post not found" });
+  }
+  res.json(singlePost);
+}catch(er){
+  console.error(er);
+  res.status(500).json({ message: "Internal Server Error" });
+}
 });
 app.post("/add", async (req, res) => {
   try {
